@@ -24,8 +24,8 @@ jobs:
           - pip install -r requirements.txt
           - pip install pylint
           - pip install pydocstyle
-          - pylint api.py
-          - pydocstyle api.py
+          - pylint app/api.py
+          - pydocstyle app/api.py
     - stage: cyclomatic complexity
       name: "Cyclomatic complexity checking"
       before_script:
