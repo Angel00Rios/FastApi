@@ -14,7 +14,7 @@ Offerings ODS API.
 # Revision history : 2020-07-20 - [AR] Initial version.
 #----------------------------------------------------------------------------------------
 """
-from typing import Optional, List
+#from typing import Optional, List
 
 # Log handling.
 import logging
@@ -23,15 +23,15 @@ import logging
 import os
 
 # Dara wrangling
-import pandas as pd
+#import pandas as pd
 
 # Enconder JSON
-from fastapi.encoders import jsonable_encoder
+#from fastapi.encoders import jsonable_encoder
 
 # Fast api functionality
-from fastapi import Depends, FastAPI, HTTPException, status, Security
+from fastapi import FastAPI, status#, Depends, HTTPException, Security
 from fastapi.responses import JSONResponse
-from fastapi.security.api_key import APIKeyHeader
+#from fastapi.security.api_key import APIKeyHeader
 
 # functionality
 import functionality
