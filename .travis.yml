@@ -1,0 +1,49 @@
+language: python
+python:
+   - "3.9"
+
+# SonarQube plugin
+addons:
+  sonarcloud: true
+
+stages:
+  - linting
+  - unit tests
+  - cyclomatic complexity
+  - security
+
+jobs:
+  include:
+    - stage: linting
+      name: "PEP-8 compliance checking"
+      before_script:
+        # Adding wd to PYTHONPATH.
+        - export PYTHONPATH=$(pwd)/app
+        - echo ${PYTHONPATH}
+      script:
+          - pip install -r requirements.txt
+          - pip install pylint
+          - pip install pydocstyle
+          - pylint api.py
+          - pydocstyle api.py
+    - stage: cyclomatic complexity
+      name: "Cyclomatic complexity checking"
+      before_script:
+        # Adding wd to PYTHONPATH.
+        - export PYTHONPATH=$(pwd)/app
+        - echo ${PYTHONPATH}
+      script:
+          - pip install flake8-polyfill
+          - pip install xenon
+          - xenon --max-absolute C --max-modules C --max-average C app/api.py
+    - stage: security
+      name: "Security vulnerabilities checking"
+      before_script:
+        # Adding wd to PYTHONPATH.
+        - export PYTHONPATH=$(pwd)/app
+        - echo ${PYTHONPATH}
+      script:
+          - pip install bandit
+          - bandit app/api.py
+          - pip install safety
+          - safety check --full-report --file requirements.txt
