@@ -14,7 +14,7 @@ Offerings ODS API.
 # Revision history : 2020-07-20 - [AR] Initial version.
 #----------------------------------------------------------------------------------------
 """
-#from typing import Optional, List
+from typing import Optional, List
 
 # Log handling.
 import logging
@@ -48,14 +48,28 @@ APP = FastAPI(title="Title",
               description="API to handle data.",
               version="0.9.0",)
 
-#---------------------------------------------------------------------------------------------------
-#---------- API METHODS
-#---------------------------------------------------------------------------------------------------
+#---------- API METHODS ---------------------------------------------------------------------------
+
+@APP.get("/test")
+async def get_test(table: str, key: Optional[str] = None, valuekey: Optional[str] = None,
+                   columns: Optional[str] = None):
+    """Health check used to monitor from New Relic."""
+    LOG.info('table')
+    LOG.info(table)
+    LOG.info('key')
+    LOG.info(key)
+    LOG.info('valuekey')
+    LOG.info(valuekey)
+    LOG.info('columns')
+    LOG.info(columns)
+    return JSONResponse(status_code=status.HTTP_200_OK, content={'status': 'alive_test'})
 
 @APP.get("/health")
 async def healthcheck():
     """Health check used to monitor from New Relic."""
     return JSONResponse(status_code=status.HTTP_200_OK, content={'status': 'alive'})
+
+#---------- GENERAL METHODS -----------------------------------------------------------------------
 
 def init_logger(level: str) -> None:
     """
@@ -74,9 +88,9 @@ def init_logger(level: str) -> None:
 
     stream_handler.setFormatter(stream_formatter)
     LOG.addHandler(stream_handler)
+    LOG.propagate = False
 
 # Set log level.
 init_logger(os.environ["LOGLEVEL"])
-
 # Get environment config.
 CONF = functionality.read_file(os.path.join(PROJECT_DIR, "conf", "api.conf"), "json")
