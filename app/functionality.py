@@ -50,14 +50,14 @@ def select_by_key(connection, tabla, key, key_value, columns = "*"):
             # Read a single record
             #sql = "SELECT `userName`, `password` FROM `users`"
             sql = "Select {} from {} Where {} = '{}'".format(columns, tabla, key, key_value)
-            logger.info(sql)
+            LOG.info(sql)
             cursor.execute(sql)
             result = cursor.fetchone()
-            logger.info(result)
+            LOG.info(result)
     except pymysql.Error as e:
         raise EnvironmentError(e)
-    #finally:
-    #    connection.close()
+    finally:
+        connection.close()
     return result
 
 def select(connection, tabla, columns = "*"):
@@ -66,40 +66,41 @@ def select(connection, tabla, columns = "*"):
             # Read a single record
             #sql = "SELECT `userName`, `password` FROM `users`"
             sql = "Select {} from {} ".format(columns, tabla)
-            logger.info(sql)
+            LOG.info(sql)
             cursor.execute(sql)
             sql_values = cursor.fetchall()
-            logger.info(sql_values)
+            LOG.info(sql_values)
     except pymysql.Error as e:
         raise EnvironmentError(e)
-    #finally:
-    #    connection.close()
+    finally:
+        connection.close()
     return sql_values
 
-def insert(connection, dictio, table):
-    before_to_insert([dictio])
+def insert(connection, dictio_list, table):
+    before_to_insert(dictio_list)
     try:
-        with connection.cursor() as cursor:
-            # Create a new record
-            sql = "INSERT INTO {0} ({1}) VALUES ({2}) ".format(table, ", ".join(dictio.keys()).lower(),
-                                                                ",".join(str(v.encode("utf-8")) for v in dictio.values()))
-            logger.info(sql)
-            cursor.execute(sql)
-        # connection is not autocommit by default. So you must commit to save
-        # your changes.
-        connection.commit()
+        for dictio in dictio_list:
+            with connection.cursor() as cursor:
+                # Create a new record
+                sql = "INSERT INTO {0} ({1}) VALUES ({2}) ".format(table, ", ".join(dictio.keys()).lower(),
+                                                                    ",".join(str(v) for v in dictio.values()))
+                LOG.info(sql)
+                cursor.execute(sql)
+            # connection is not autocommit by default. So you must commit to save
+            # your changes.
+            connection.commit()
     except pymysql.Error as e:
         raise EnvironmentError(e)
-    #finally:
-    #    connection.close()
+    finally:
+        connection.close()
 
 def update(connection, dic, table, key):
     before_to_insert([dic])
     lista = []
     value = dic[key]
     # Create a update sql statement
-    for column, row in dic.iteritems():
-        lista.append(column.lower() + ' = ' + str(row.encode("utf-8")))
+    for column, row in dic.items():
+        lista.append(column.lower() + ' = ' + str(row))
     sql = "UPDATE {0} SET {1} where {2} = {3}".format(table, ', '.join(lista), key, value)
     try:
         with connection.cursor() as cursor:
@@ -110,8 +111,8 @@ def update(connection, dic, table, key):
         connection.commit()
     except pymysql.Error as e:
         raise EnvironmentError(e)
-    #finally:
-    #    connection.close()
+    finally:
+        connection.close()
 
 def delete_by_key(connection, tabla, key):
     try:
@@ -123,8 +124,8 @@ def delete_by_key(connection, tabla, key):
             result = cursor.fetchone()
     except pymysql.Error as e:
         raise EnvironmentError(e)
-    #finally:
-    #    connection.close()
+    finally:
+        connection.close()
     return result
 
 def before_to_insert(dictionaries_list):
@@ -140,10 +141,10 @@ def before_to_insert(dictionaries_list):
             if dic[key] is None:
                 dic[key] = 'NULL'
     #if is different of only with space and at least one character
-            elif  dic[key].isspace() is True:
+            elif  str(dic[key]).isspace() is True:
                 dic.update({key:"NULL"})
             elif dic[key] and dic[key] != "NULL":
-                dic.update({key: "'" + escape_apostrophe(dic[key]) + "'"})
+                dic.update({key: "'" + escape_apostrophe(str(dic[key])) + "'"})
             else:
                 dic.update({key:"NULL"})
 
