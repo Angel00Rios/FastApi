@@ -8,7 +8,6 @@ addons:
 
 stages:
   - linting
-  - unit tests
   - cyclomatic complexity
   - security
 

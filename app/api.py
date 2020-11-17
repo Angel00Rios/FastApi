@@ -49,8 +49,8 @@ APP = FastAPI(title="Smart store",
 #---------- API METHODS ---------------------------------------------------------------------------
 
 @APP.get("/get")
-async def get(table: str, key: Optional[str] = None, valuekey: Optional[str] = None,
-                   columns: Optional[str] = None):
+async def get(table: str, key: str = None, valuekey: str = None,
+                   columns: str = None):
     """Get information."""
     if columns:
         columns = ", ".join(columns)
@@ -65,7 +65,7 @@ async def get(table: str, key: Optional[str] = None, valuekey: Optional[str] = N
     return JSONResponse(status_code=status.HTTP_200_OK, content={'status': result})
 
 @APP.post("/post")
-async def post(data: List[dict], table: str):
+async def post(data: dict, table: str):
     """POST information."""
     data = jsonable_encoder(data)
     LOG.info(data)
