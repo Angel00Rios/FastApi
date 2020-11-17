@@ -14,8 +14,6 @@ Offerings ODS API.
 # Revision history : 2020-07-20 - [AR] Initial version.
 #----------------------------------------------------------------------------------------
 """
-from typing import Optional, List
-
 # Log handling.
 import logging
 
