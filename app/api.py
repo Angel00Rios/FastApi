@@ -27,9 +27,9 @@ import os
 from fastapi.encoders import jsonable_encoder
 
 # Fast api functionality
-from fastapi import FastAPI, status#, Depends, HTTPException, Security
+from fastapi import FastAPI, status, Security, HTTPException, Depends
 from fastapi.responses import JSONResponse
-#from fastapi.security.api_key import APIKeyHeader
+from fastapi.security.api_key import APIKeyHeader
 
 # functionality
 import functionality
@@ -41,16 +41,31 @@ PROJECT_DIR = os.path.dirname(WORKING_DIR)
 # Logging configuration.
 LOG = logging.getLogger()
 
+API_KEY_H = APIKeyHeader(name='AccessKey', auto_error=False)
+
 # FastAPI app
 APP = FastAPI(title="Smart store",
               description="API to handle data.",
-              version="0.9.0",)
+              version="0.9.0",
+              docs_url="/")
+
+#---------- AUTHENTICATION METHOD ---------------------------------------------------------------------------
+
+async def check_auth(token: str = Security(API_KEY_H)):
+    """Check access token."""
+    if token not in os.environ['AccessKey']:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return True
 
 #---------- API METHODS ---------------------------------------------------------------------------
 
 @APP.get("/get")
 async def get(table: str, key: str = None, valuekey: str = None,
-                   columns: str = None):
+                   columns: str = None, _=Depends(check_auth)):
     """Get information."""
     if columns:
         columns = ", ".join(columns)
@@ -65,7 +80,7 @@ async def get(table: str, key: str = None, valuekey: str = None,
     return JSONResponse(status_code=status.HTTP_200_OK, content={'status': result})
 
 @APP.post("/post")
-async def post(data: dict, table: str):
+async def post(data: dict, table: str, _=Depends(check_auth)):
     """POST information."""
     data = jsonable_encoder(data)
     LOG.info(data)
@@ -75,7 +90,7 @@ async def post(data: dict, table: str):
     return JSONResponse(status_code=status.HTTP_200_OK)
 
 @APP.put("/put")
-async def put(data: dict, table: str, key: str):
+async def put(data: dict, table: str, key: str, _=Depends(check_auth)):
     """POST information."""
     data = jsonable_encoder(data)
     LOG.info(data)
@@ -85,7 +100,7 @@ async def put(data: dict, table: str, key: str):
     return JSONResponse(status_code=status.HTTP_200_OK)
 
 @APP.get("/health")
-async def healthcheck():
+async def healthcheck(_=Depends(check_auth)):
     """Health check used to monitor from New Relic."""
     return JSONResponse(status_code=status.HTTP_200_OK, content={'status': 'alive'})
 
