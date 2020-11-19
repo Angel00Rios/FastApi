@@ -53,7 +53,7 @@ APP = FastAPI(title="Smart store",
 
 async def check_auth(token: str = Security(API_KEY_H)):
     """Check access token."""
-    if token not in os.environ['AccessKey']:
+    if str(token) not in os.environ['AccessKey']:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
