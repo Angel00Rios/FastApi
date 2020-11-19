@@ -1,17 +1,12 @@
 """
-Offerings ODS API.
+Smart store API.
 
 #----------------------------------------------------------------------------------------
-# Description      : REST API, process files and save it to local directory.
-#                    Modules and code for Python Python 3.7.3.
+# Description      : REST API.
+#                    Modules and code for Python Python 3.9
 #
 # Requirements.    : fastapi
 #                    uvicorn
-#
-# Creation Date    : 2020-07-20
-# Author           : [AR] angel.rios@ibm.com
-#
-# Revision history : 2020-07-20 - [AR] Initial version.
 #----------------------------------------------------------------------------------------
 """
 # Log handling.
@@ -99,6 +94,16 @@ async def put(data: dict, table: str, key: str, _=Depends(check_auth)):
     functionality.update(conn, data, table, key)
     return JSONResponse(status_code=status.HTTP_200_OK)
 
+@APP.get("/AI")
+async def get_ai(_=Depends(check_auth)):
+    """POST information."""
+    #conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
+     #                               os.environ["dbpwd"], os.environ["dbname"])
+    #functionality.select(conn, 'products', '*')
+    LOG.info('starting send response')
+    data
+    return JSONResponse(status_code=status.HTTP_200_OK, content={'data': data})
+
 @APP.get("/health")
 async def healthcheck(_=Depends(check_auth)):
     """Health check used to monitor from New Relic."""
@@ -129,3 +134,6 @@ def init_logger(level: str) -> None:
 init_logger(os.environ["LOGLEVEL"])
 # Get environment config.
 CONF = functionality.read_file(os.path.join(PROJECT_DIR, "conf", "api.conf"), "json")
+data = {'ID': '',
+        'Existencia': '155',
+        'Necesario': '120'}

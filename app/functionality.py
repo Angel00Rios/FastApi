@@ -2,10 +2,8 @@
 Process.
 
 #----------------------------------------------------------------------------------------
-# Creation Date    : 2020-11-14
 # Author           : [AR] Angel Rios <angel00rios@yahoo.com>
 #
-# Revision history : 2020-11-14 - [AR] Initial version.
 #----------------------------------------------------------------------------------------
 """
 # System and OS related functionality.
