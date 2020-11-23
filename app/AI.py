@@ -5,7 +5,7 @@
 Smart store API.
 
 #----------------------------------------------------------------------------------------
-# Description      : AI module.
+# Description      : AI rnn module.
 #                    Modules and code for Python Python 3.9
 #
 # Requirements.    : sklearn

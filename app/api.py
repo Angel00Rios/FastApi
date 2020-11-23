@@ -57,51 +57,20 @@ async def check_auth(token: str = Security(API_KEY_H)):
     return True
 
 #---------- API METHODS ---------------------------------------------------------------------------
-
-@APP.get("/get")
-async def get(table: str, key: str = None, valuekey: str = None,
-                   columns: str = None, _=Depends(check_auth)):
-    """Get information."""
-    if columns:
-        columns = ", ".join(columns)
-    else:
-        columns = '*'
+@APP.get("/productos_viables")
+async def get_productos(_=Depends(check_auth)):
+    """Obtener historial de ventas de un product"""
     conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
                                     os.environ["dbpwd"], os.environ["dbname"])
-    if key:
-        result = functionality.select_by_key(conn, table, key, valuekey, columns)
-    else:
-        result = functionality.select(conn, table, columns)
-    return JSONResponse(status_code=status.HTTP_200_OK, content={'status': result})
+    result = functionality.get_productos(conn)
+    return JSONResponse(status_code=status.HTTP_200_OK, content={'data': result})
 
-@APP.post("/post")
-async def post(data: dict, table: str, _=Depends(check_auth)):
+@APP.get("/red_neuronal_recurrente")
+async def get_ai(product_id: str, _=Depends(check_auth)):
     """POST information."""
-    data = jsonable_encoder(data)
-    LOG.info(data)
     conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
                                     os.environ["dbpwd"], os.environ["dbname"])
-    functionality.insert(conn, data, table)
-    return JSONResponse(status_code=status.HTTP_200_OK)
-
-@APP.put("/put")
-async def put(data: dict, table: str, key: str, _=Depends(check_auth)):
-    """POST information."""
-    data = jsonable_encoder(data)
-    LOG.info(data)
-    conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
-                                    os.environ["dbpwd"], os.environ["dbname"])
-    functionality.update(conn, data, table, key)
-    return JSONResponse(status_code=status.HTTP_200_OK)
-
-@APP.get("/AI")
-async def get_ai(_=Depends(check_auth)):
-    """POST information."""
-    #conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
-     #                               os.environ["dbpwd"], os.environ["dbname"])
-    #functionality.select(conn, 'products', '*')
-    LOG.info('starting send response')
-    data
+    data = functionality.get_product_hitoric(conn, product_id)
     return JSONResponse(status_code=status.HTTP_200_OK, content={'data': data})
 
 @APP.get("/health")

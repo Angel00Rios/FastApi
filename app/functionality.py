@@ -74,83 +74,33 @@ def select(connection, tabla, columns = "*"):
         connection.close()
     return sql_values
 
-def insert(connection, dictio_list, table):
-    before_to_insert(dictio_list)
-    try:
-        for dictio in dictio_list:
-            with connection.cursor() as cursor:
-                # Create a new record
-                sql = "INSERT INTO {0} ({1}) VALUES ({2}) ".format(table, ", ".join(dictio.keys()).lower(),
-                                                                    ",".join(str(v) for v in dictio.values()))
-                LOG.info(sql)
-                cursor.execute(sql)
-            # connection is not autocommit by default. So you must commit to save
-            # your changes.
-            connection.commit()
-    except pymysql.Error as e:
-        raise EnvironmentError(e)
-    finally:
-        connection.close()
-
-def update(connection, dic, table, key):
-    before_to_insert([dic])
-    lista = []
-    value = dic[key]
-    # Create a update sql statement
-    for column, row in dic.items():
-        lista.append(column.lower() + ' = ' + str(row))
-    sql = "UPDATE {0} SET {1} where {2} = {3}".format(table, ', '.join(lista), key, value)
+def get_productos(connection):
     try:
         with connection.cursor() as cursor:
-            # 
+            sql = read_file(os.path.join(PROJECT_DIR, "sql", "step1.sql"), "sql")
+            LOG.info(sql)
             cursor.execute(sql)
-        # connection is not autocommit by default. So you must commit to save
-        # your changes.
-        connection.commit()
+            sql_values = cursor.fetchall()
+            LOG.info(sql_values)
     except pymysql.Error as e:
         raise EnvironmentError(e)
     finally:
         connection.close()
+    return sql_values
 
-def delete_by_key(connection, tabla, key):
+def get_product_hitoric(connection, product_id):
     try:
         with connection.cursor() as cursor:
-            # Read a single record
-            #sql = "SELECT `userName`, `password` FROM `users`"
-            sql = "DELETE from {} Where cellphone = {}".format(tabla, key)
+            sql = read_file(os.path.join(PROJECT_DIR, "sql", "step1.sql"), "sql").format(product_id)
+            LOG.info(sql)
             cursor.execute(sql)
-            result = cursor.fetchone()
+            sql_values = cursor.fetchall()
+            LOG.info(sql_values)
     except pymysql.Error as e:
         raise EnvironmentError(e)
     finally:
         connection.close()
-    return result
-
-def before_to_insert(dictionaries_list):
-    """Modify the values of a list of dictionaries for insert them into the database.\n
-    Input:
-    dictionaries_list    -> dictionaries to fill with the necesary information
-                            for each insert in the DB
-    List of keys of string columns to add single quotes.
-    If is a void field convert this one to NULL
-    """
-    for dic in dictionaries_list:
-        for key in dic:
-            if dic[key] is None:
-                dic[key] = 'NULL'
-    #if is different of only with space and at least one character
-            elif  str(dic[key]).isspace() is True:
-                dic.update({key:"NULL"})
-            elif dic[key] and dic[key] != "NULL":
-                dic.update({key: "'" + escape_apostrophe(str(dic[key])) + "'"})
-            else:
-                dic.update({key:"NULL"})
-
-def escape_apostrophe(_string):
-    '''
-    This function will duplicate each apostrophe
-    '''
-    return "''".join(_string.split("'"))
+    return sql_values
 
 def read_file(conf_file: str, format_: str) -> object:
     """
