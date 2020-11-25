@@ -28,6 +28,7 @@ from fastapi.security.api_key import APIKeyHeader
 
 # functionality
 import functionality
+import ia
 
 # Get the full path where this program exist.
 WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -61,7 +62,7 @@ async def check_auth(token: str = Security(API_KEY_H)):
 async def get_productos(_=Depends(check_auth)):
     """Obtener historial de ventas de un product"""
     conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
-                                    os.environ["dbpwd"], os.environ["dbname"])
+                                    os.environ["dbpwd"], os.environ["dbname"], os.environ["port"])
     result = functionality.get_productos(conn)
     return JSONResponse(status_code=status.HTTP_200_OK, content={'data': result})
 
@@ -69,9 +70,9 @@ async def get_productos(_=Depends(check_auth)):
 async def get_ai(product_id: str, _=Depends(check_auth)):
     """POST information."""
     conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
-                                    os.environ["dbpwd"], os.environ["dbname"])
-    data = functionality.get_product_hitoric(conn, product_id)
-    return JSONResponse(status_code=status.HTTP_200_OK, content={'data': data})
+                                    os.environ["dbpwd"], os.environ["dbname"], os.environ["port"])
+    data = functionality.get_product_hitoric(conn, str(product_id))
+    return ia.get_ai(data)
 
 @APP.get("/health")
 async def healthcheck(_=Depends(check_auth)):

@@ -30,49 +30,18 @@ WORKING_DIR = os.path.dirname(os.path.realpath(__file__))
 # Get the project directory.
 PROJECT_DIR = os.path.dirname(WORKING_DIR)
 
-def connection(host, user, password, db, charset = 'utf8'):
+def connection(host, user, password, db, port):
     try:
         connection = pymysql.connect(host = host,
                                      user = user,
                                      password = password,
                                      db = db,
+                                     port = int(port),
                                      charset =  'utf8',
                                      cursorclass = pymysql.cursors.DictCursor)
     except pymysql.Error as e:
         raise EnvironmentError(e)
     return connection
-
-def select_by_key(connection, tabla, key, key_value, columns = "*"):
-    try:
-        with connection.cursor() as cursor:
-            # Read a single record
-            #sql = "SELECT `userName`, `password` FROM `users`"
-            sql = "Select {} from {} Where {} = '{}'".format(columns, tabla, key, key_value)
-            LOG.info(sql)
-            cursor.execute(sql)
-            result = cursor.fetchone()
-            LOG.info(result)
-    except pymysql.Error as e:
-        raise EnvironmentError(e)
-    finally:
-        connection.close()
-    return result
-
-def select(connection, tabla, columns = "*"):
-    try:
-        with connection.cursor() as cursor:
-            # Read a single record
-            #sql = "SELECT `userName`, `password` FROM `users`"
-            sql = "Select {} from {} ".format(columns, tabla)
-            LOG.info(sql)
-            cursor.execute(sql)
-            sql_values = cursor.fetchall()
-            LOG.info(sql_values)
-    except pymysql.Error as e:
-        raise EnvironmentError(e)
-    finally:
-        connection.close()
-    return sql_values
 
 def get_productos(connection):
     try:
@@ -91,7 +60,7 @@ def get_productos(connection):
 def get_product_hitoric(connection, product_id):
     try:
         with connection.cursor() as cursor:
-            sql = read_file(os.path.join(PROJECT_DIR, "sql", "step1.sql"), "sql").format(product_id)
+            sql = read_file(os.path.join(PROJECT_DIR, "sql", "step2.sql"), "sql").format(product_id)
             LOG.info(sql)
             cursor.execute(sql)
             sql_values = cursor.fetchall()
