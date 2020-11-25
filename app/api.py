@@ -49,7 +49,7 @@ APP = FastAPI(title="Smart store",
 
 async def check_auth(token: str = Security(API_KEY_H)):
     """Check access token."""
-    if str(token) not in os.environ['AccessKey']:
+    if str(token) not in os.environ['ACCESSKEY']:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -61,16 +61,16 @@ async def check_auth(token: str = Security(API_KEY_H)):
 @APP.get("/productos_viables")
 async def get_productos(_=Depends(check_auth)):
     """Obtener historial de ventas de un product"""
-    conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
-                                    os.environ["dbpwd"], os.environ["dbname"], os.environ["port"])
+    conn = functionality.connection(os.environ["DBHOSTNAME"], os.environ["DBUID"],
+                                    os.environ["DBPWD"], os.environ["DBNAME"], os.environ["PORT"])
     result = functionality.get_productos(conn)
     return JSONResponse(status_code=status.HTTP_200_OK, content={'data': result})
 
 @APP.get("/red_neuronal_recurrente")
 async def get_ai(product_id: str, _=Depends(check_auth)):
     """POST information."""
-    conn = functionality.connection(os.environ["dbhostname"], os.environ["dbuid"],
-                                    os.environ["dbpwd"], os.environ["dbname"], os.environ["port"])
+    conn = functionality.connection(os.environ["DBHOSTNAME"], os.environ["DBUID"],
+                                    os.environ["DBPWD"], os.environ["DBNAME"], os.environ["PORT"])
     data = functionality.get_product_hitoric(conn, str(product_id))
     return ia.get_ai(data)
 
