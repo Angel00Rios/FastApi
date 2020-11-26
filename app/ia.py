@@ -92,23 +92,5 @@ def get_ai(dataset_train):
 
     predicted_stock_price = regressor.predict(X_test)
     predicted_stock_price = sc.inverse_transform(predicted_stock_price)
-
-    #ventas del ultimo mes
-    dataset_test = pd.read_csv('test.csv')
-    real_stock_price = dataset_test.iloc[:, 1:2].values
-    LOG.info(dataset_test['Cantidad'].sum())
     predicted_df = pd.DataFrame(predicted_stock_price)
-    LOG.info(predicted_df['Cantidad'].sum())
-    # Visualizar los Resultados
-    plt.plot(real_stock_price, color = 'red', label = 'Ventas del ultimo mes')
-    plt.plot(predicted_stock_price, color = 'blue', label = 'Ventas predichas')
-    plt.title("Prediccion con una RNR de ventas de tostatronic")
-    plt.xlabel("Fecha")
-    plt.ylabel("Ventas")
-    plt.legend()
-    plt.show()
-
-
-# Agregar dias con 0 ventas
-# Sumar los 30 resultados para obtener el total
-## los dias que casi no se vende nos dara valores normalizados
+    return {'Prediccion': predicted_df['Cantidad'].sum()}

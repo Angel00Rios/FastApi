@@ -66,7 +66,7 @@ async def get_productos(_=Depends(check_auth)):
     result = functionality.get_productos(conn)
     return JSONResponse(status_code=status.HTTP_200_OK, content={'data': result})
 
-@APP.get("/red_neuronal_recurrente")
+@APP.get("/prediccion_de_ventas")
 async def get_ai(product_id: str, _=Depends(check_auth)):
     """POST information."""
     conn = functionality.connection(os.environ["DBHOSTNAME"], os.environ["DBUID"],
