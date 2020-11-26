@@ -78,7 +78,7 @@ def get_ai(dataset_train):
 
     # Parte 3 - Ajustar las predicciones y visualizar los resultados
     dataset_total = dataset_train['Cantidad'].copy()
-    inputs = dataset_total[len(dataset_total) - 60:].values
+    inputs = dataset_total[len(dataset_total) - 90:].values
     inputs = inputs.reshape(-1,1)
     inputs = sc.transform(inputs)
     LOG.info(inputs)
