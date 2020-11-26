@@ -1,4 +1,4 @@
-SELECT productos_de_venta.id_producto, productos.nombre, count(*) as ventas_totales
+SELECT productos_de_venta.id_producto, productos.nombre, count(*) as ventas_totales, productos.existencia
 FROM venta
 INNER JOIN productos_de_venta
 	ON productos_de_venta.id_venta = venta.id_venta

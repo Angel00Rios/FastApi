@@ -74,7 +74,7 @@ def get_ai(dataset_train):
     regressor.compile(optimizer = 'adam', loss = 'mean_squared_error')
 
     # Ajustar la RNR al conjunto de entrenamiento
-    regressor.fit(X_train, y_train, epochs = 200, batch_size = 32)
+    regressor.fit(X_train, y_train, epochs = 100, batch_size = 32)
 
     # Parte 3 - Ajustar las predicciones y visualizar los resultados
     dataset_total = dataset_train['Cantidad'].copy()
@@ -92,5 +92,4 @@ def get_ai(dataset_train):
 
     predicted_stock_price = regressor.predict(X_test)
     predicted_stock_price = sc.inverse_transform(predicted_stock_price)
-    predicted_df = pd.DataFrame(predicted_stock_price)
-    return {'Prediccion': predicted_df['Cantidad'].sum()}
+    return {'Prediccion': int(sum(predicted_stock_price))}

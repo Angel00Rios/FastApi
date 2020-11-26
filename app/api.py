@@ -63,8 +63,7 @@ async def get_productos(_=Depends(check_auth)):
     """Obtener historial de ventas de un product"""
     conn = functionality.connection(os.environ["DBHOSTNAME"], os.environ["DBUID"],
                                     os.environ["DBPWD"], os.environ["DBNAME"], os.environ["PORT"])
-    result = functionality.get_productos(conn)
-    return JSONResponse(status_code=status.HTTP_200_OK, content={'data': result})
+    return functionality.get_productos(conn)
 
 @APP.get("/prediccion_de_ventas")
 async def get_ai(product_id: str, _=Depends(check_auth)):
